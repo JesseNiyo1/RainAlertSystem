@@ -1,0 +1,37 @@
+name: Rain Alert SMS
+
+on:
+  schedule:
+    # 5:00 AM EST (10:00 UTC during standard time)
+    # GitHub Actions schedules use UTC
+    - cron: "0 10 * * *"
+
+  workflow_dispatch:
+
+jobs:
+  send-rain-alert:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run weather alert script
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
+          MY_LATITUDE: ${{ secrets.MY_LATITUDE }}
+          MY_LONGITUDE: ${{ secrets.MY_LONGITUDE }}
+          MY_ACCOUNT_SID: ${{ secrets.MY_ACCOUNT_SID }}
+          MY_AUTH_TOKEN: ${{ secrets.MY_AUTH_TOKEN }}
+          MY_PHONE_NUMBER: ${{ secrets.MY_PHONE_NUMBER }}
+          MY_TRIAL_PHONE_NUMBER: ${{ secrets.MY_TRIAL_PHONE_NUMBER }}
+        run: python main.py
